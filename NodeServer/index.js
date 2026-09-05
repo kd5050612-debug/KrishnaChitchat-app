@@ -1,4 +1,3 @@
-
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -9,7 +8,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "https://krishna-chitchat-app.vercel.app",
+        origin: "*",
         methods: ["GET", "POST"]
     }
 });
@@ -17,18 +16,18 @@ const io = new Server(server, {
 const users = {};
 
 app.get("/", (req, res) => {
-    res.status(200).send("Krishna-ChitChat Socket.IO Server is running");
+    res.status(200).send("Krishna-ChitChat Server is Running");
 });
 
 io.on("connection", (socket) => {
 
-    console.log("New user connected:", socket.id);
+    console.log("USER CONNECTED:", socket.id);
 
     socket.on("new-user-joined", (name) => {
 
         users[socket.id] = name;
 
-        console.log(`${name} joined the chat`);
+        console.log(name + " joined the chat");
 
         socket.broadcast.emit("user-joined", name);
     });
@@ -37,7 +36,7 @@ io.on("connection", (socket) => {
 
         const name = users[socket.id];
 
-        console.log(`${name}: ${message}`);
+        console.log(name + ": " + message);
 
         socket.broadcast.emit("receive", {
             name: name,
@@ -51,7 +50,7 @@ io.on("connection", (socket) => {
 
         if (name) {
 
-            console.log(`${name} left the chat`);
+            console.log(name + " left the chat");
 
             socket.broadcast.emit("left", name);
 
@@ -63,6 +62,5 @@ io.on("connection", (socket) => {
 const PORT = process.env.PORT || 8000;
 
 server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log("Server running on port " + PORT);
 });
-
