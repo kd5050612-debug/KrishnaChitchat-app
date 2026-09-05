@@ -1,75 +1,85 @@
-alert("CLIENT.JS LOADED");
-
-console.log("CLIENT JS LOADED");
+console.log("CLIENT JS STARTED");
 
 const socket = io("https://krishnachitchat-app.onrender.com");
 
-console.log("Socket object created");
+console.log("SOCKET CREATED");
 
 socket.on("connect", () => {
 
-    alert("SOCKET CONNECTED");
-
-    console.log("CONNECTED");
+    console.log("CONNECTED TO RENDER");
     console.log("Socket ID:", socket.id);
 
-    const name = prompt("Enter your name:");
+    const userName = prompt("Enter your name to join");
 
-    console.log("Name entered:", name);
-
-    if (name && name.trim() !== "") {
-        socket.emit("new-user-joined", name.trim());
+    if (!userName || userName.trim() === "") {
+        return;
     }
+
+    socket.emit("new-user-joined", userName.trim());
+
+    console.log("USERNAME SENT:", userName);
 });
 
 socket.on("connect_error", (error) => {
 
-    alert("SOCKET CONNECTION ERROR");
-
-    console.error("Connection error:", error);
+    console.error("SOCKET CONNECTION ERROR");
+    console.error(error);
 });
+
+socket.on("disconnect", (reason) => {
+
+    console.log("DISCONNECTED:", reason);
+});
+
 
 socket.on("user-joined", (name) => {
 
-    console.log("User joined:", name);
-
-    const div = document.createElement("div");
-    div.innerText = name + " joined the chat";
-    div.classList.add("message", "right");
-
-    document.querySelector(".container").appendChild(div);
+    append(name + " joined the chat", "right");
 });
+
 
 socket.on("receive", (data) => {
 
-    console.log("Received:", data);
-
-    const div = document.createElement("div");
-    div.innerText = data.name + ": " + data.message;
-    div.classList.add("message", "left");
-
-    document.querySelector(".container").appendChild(div);
+    append(
+        data.name + ": " + data.message,
+        "left"
+    );
 });
+
 
 socket.on("left", (name) => {
 
-    const div = document.createElement("div");
-    div.innerText = name + " left the chat";
-    div.classList.add("message", "right");
-
-    document.querySelector(".container").appendChild(div);
+    append(
+        name + " left the chat",
+        "right"
+    );
 });
+
+
+function append(message, position) {
+
+    const messageElement =
+        document.createElement("div");
+
+    messageElement.innerText = message;
+
+    messageElement.classList.add("message");
+    messageElement.classList.add(position);
+
+    document
+        .querySelector(".container")
+        .appendChild(messageElement);
+}
 
 
 document
     .getElementById("send-container")
-    .addEventListener("submit", function (e) {
+    .addEventListener("submit", (e) => {
 
         e.preventDefault();
 
-        console.log("SEND CLICKED");
-
-        const input = document.getElementById("messageInp");
+        const input =
+            document.getElementById("messageInp");
 
         const message = input.value.trim();
 
@@ -77,13 +87,10 @@ document
             return;
         }
 
-        const div = document.createElement("div");
-
-        div.innerText = "You: " + message;
-
-        div.classList.add("message", "right");
-
-        document.querySelector(".container").appendChild(div);
+        append(
+            "You: " + message,
+            "right"
+        );
 
         socket.emit("send", message);
 
