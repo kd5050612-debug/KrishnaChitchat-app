@@ -1,13 +1,54 @@
-console.log("CLIENT JS STARTED");
-
 const socket = io("https://krishnachitchat-app.onrender.com");
 
-console.log("SOCKET CREATED");
+const audio = document.getElementById("chatAudio");
+
+let audioUnlocked = false;
+
+
+// Unlock audio after user's first interaction
+document.addEventListener("click", () => {
+
+    if (audioUnlocked) {
+        return;
+    }
+
+    audio.play()
+        .then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+            audioUnlocked = true;
+
+            console.log("Audio unlocked");
+        })
+        .catch((error) => {
+            console.log("Audio unlock failed:", error);
+        });
+
+}, { once: true });
+
+
+function playMessageSound() {
+
+    if (!audio) {
+        console.log("Audio element not found");
+        return;
+    }
+
+    audio.currentTime = 0;
+
+    audio.play()
+        .then(() => {
+            console.log("Fahhhh sound played");
+        })
+        .catch((error) => {
+            console.log("Sound blocked:", error);
+        });
+}
+
 
 socket.on("connect", () => {
 
-    console.log("CONNECTED TO RENDER");
-    console.log("Socket ID:", socket.id);
+    console.log("CONNECTED");
 
     const userName = prompt("Enter your name to join");
 
@@ -15,26 +56,19 @@ socket.on("connect", () => {
         return;
     }
 
-    socket.emit("new-user-joined", userName.trim());
-
-    console.log("USERNAME SENT:", userName);
-});
-
-socket.on("connect_error", (error) => {
-
-    console.error("SOCKET CONNECTION ERROR");
-    console.error(error);
-});
-
-socket.on("disconnect", (reason) => {
-
-    console.log("DISCONNECTED:", reason);
+    socket.emit(
+        "new-user-joined",
+        userName.trim()
+    );
 });
 
 
 socket.on("user-joined", (name) => {
 
-    append(name + " joined the chat", "right");
+    append(
+        name + " joined the chat",
+        "right"
+    );
 });
 
 
@@ -44,6 +78,8 @@ socket.on("receive", (data) => {
         data.name + ": " + data.message,
         "left"
     );
+
+    playMessageSound();
 });
 
 
@@ -63,8 +99,10 @@ function append(message, position) {
 
     messageElement.innerText = message;
 
-    messageElement.classList.add("message");
-    messageElement.classList.add(position);
+    messageElement.classList.add(
+        "message",
+        position
+    );
 
     document
         .querySelector(".container")
@@ -81,7 +119,8 @@ document
         const input =
             document.getElementById("messageInp");
 
-        const message = input.value.trim();
+        const message =
+            input.value.trim();
 
         if (message === "") {
             return;
