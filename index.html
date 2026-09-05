@@ -4,12 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Krishna-ChitChat</title>
-
+    <!-- Core Socket.io Library -->
     <script src="https://socket.io"></script>
-    <script defer src="JS/client.js"></script>
     <link rel="stylesheet" href="Css/style.css">
 </head>
 <body>
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>Join the Conversation</h2>
+            <input type="text" id="username-input" placeholder="Enter your name..." autocomplete="off">
+            <button id="join-btn">Join Chat</button>
+        </div>
+    </div>
+
     <nav>
         <img class="logog" src="logo.png" alt="">
         <h1>Welcome to KrishnaChitchat App</h1>
@@ -19,11 +26,14 @@
     
     <div class="send">
         <form action="#" id="send-container">
-             <input type="text" name="messageInp" id="messageInp">
+             <input type="text" name="messageInp" id="messageInp" autocomplete="off">
              <button class="btn" type="submit">Send</button>
         </form>
     </div>
 
     <audio id="chatAudio" src="fahhhhh.mp3" preload="auto"></audio>
+
+    <!-- Load script at the absolute bottom so elements are always ready -->
+    <script src="JS/client.js"></script>
 </body>
 </html>
