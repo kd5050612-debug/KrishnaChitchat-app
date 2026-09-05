@@ -1,191 +1,91 @@
-console.log("=================================");
-console.log("CLIENT JS STARTED");
-console.log("=================================");
+alert("CLIENT.JS LOADED");
 
-const socket = io("https://krishnachitchat-app.onrender.com", {
-    transports: ["polling", "websocket"],
-    reconnection: true
-});
+console.log("CLIENT JS LOADED");
 
-const form = document.getElementById("send-container");
-const messageInput = document.getElementById("messageInp");
-const messageContainer = document.querySelector(".container");
-const audio = document.getElementById("chatAudio");
+const socket = io("https://krishnachitchat-app.onrender.com");
 
-console.log("Form:", form);
-console.log("Input:", messageInput);
-console.log("Container:", messageContainer);
-
-function append(message, position) {
-
-    const messageElement = document.createElement("div");
-
-    messageElement.innerText = message;
-
-    messageElement.classList.add("message");
-    messageElement.classList.add(position);
-
-    messageContainer.appendChild(messageElement);
-
-    messageContainer.scrollTop = messageContainer.scrollHeight;
-
-    if (position === "left" && audio) {
-        audio.currentTime = 0;
-
-        audio.play().catch(() => {
-            console.log("Audio blocked by browser");
-        });
-    }
-}
-
-
-// ===============================
-// SOCKET CONNECTED
-// ===============================
+console.log("Socket object created");
 
 socket.on("connect", () => {
 
-    console.log("=================================");
-    console.log("CONNECTED TO SERVER");
+    alert("SOCKET CONNECTED");
+
+    console.log("CONNECTED");
     console.log("Socket ID:", socket.id);
-    console.log("=================================");
 
-    const userName = prompt("Enter your name to join");
+    const name = prompt("Enter your name:");
 
-    if (!userName || userName.trim() === "") {
+    console.log("Name entered:", name);
 
-        alert("Please enter your name.");
-
-        return;
+    if (name && name.trim() !== "") {
+        socket.emit("new-user-joined", name.trim());
     }
-
-    socket.emit(
-        "new-user-joined",
-        userName.trim()
-    );
-
-    console.log(
-        "Username sent:",
-        userName.trim()
-    );
 });
-
-
-// ===============================
-// CONNECTION ERROR
-// ===============================
 
 socket.on("connect_error", (error) => {
 
-    console.error(
-        "SOCKET CONNECTION ERROR:",
-        error
-    );
+    alert("SOCKET CONNECTION ERROR");
+
+    console.error("Connection error:", error);
 });
-
-
-// ===============================
-// DISCONNECTED
-// ===============================
-
-socket.on("disconnect", (reason) => {
-
-    console.log(
-        "Disconnected:",
-        reason
-    );
-});
-
-
-// ===============================
-// USER JOINED
-// ===============================
 
 socket.on("user-joined", (name) => {
 
-    console.log(
-        "User joined:",
-        name
-    );
+    console.log("User joined:", name);
 
-    append(
-        `${name} joined the chat`,
-        "right"
-    );
+    const div = document.createElement("div");
+    div.innerText = name + " joined the chat";
+    div.classList.add("message", "right");
+
+    document.querySelector(".container").appendChild(div);
 });
-
-
-// ===============================
-// RECEIVE MESSAGE
-// ===============================
 
 socket.on("receive", (data) => {
 
-    console.log(
-        "Message received:",
-        data
-    );
+    console.log("Received:", data);
 
-    append(
-        `${data.name}: ${data.message}`,
-        "left"
-    );
+    const div = document.createElement("div");
+    div.innerText = data.name + ": " + data.message;
+    div.classList.add("message", "left");
+
+    document.querySelector(".container").appendChild(div);
 });
-
-
-// ===============================
-// USER LEFT
-// ===============================
 
 socket.on("left", (name) => {
 
-    console.log(
-        "User left:",
-        name
-    );
+    const div = document.createElement("div");
+    div.innerText = name + " left the chat";
+    div.classList.add("message", "right");
 
-    append(
-        `${name} left the chat`,
-        "right"
-    );
+    document.querySelector(".container").appendChild(div);
 });
 
 
-// ===============================
-// SEND MESSAGE
-// ===============================
+document
+    .getElementById("send-container")
+    .addEventListener("submit", function (e) {
 
-form.addEventListener("submit", (e) => {
+        e.preventDefault();
 
-    // VERY IMPORTANT
-    e.preventDefault();
+        console.log("SEND CLICKED");
 
-    console.log("SEND BUTTON CLICKED");
+        const input = document.getElementById("messageInp");
 
-    const message = messageInput.value.trim();
+        const message = input.value.trim();
 
-    if (message === "") {
-        return;
-    }
+        if (message === "") {
+            return;
+        }
 
-    // Show message immediately
-    append(
-        `You: ${message}`,
-        "right"
-    );
+        const div = document.createElement("div");
 
-    // Send to server
-    socket.emit(
-        "send",
-        message
-    );
+        div.innerText = "You: " + message;
 
-    console.log(
-        "Message sent:",
-        message
-    );
+        div.classList.add("message", "right");
 
-    // Clear input only
-    messageInput.value = "";
+        document.querySelector(".container").appendChild(div);
 
-});
+        socket.emit("send", message);
+
+        input.value = "";
+    });
