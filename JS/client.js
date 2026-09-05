@@ -3,19 +3,38 @@ const socket = io('https://krishnachitchat-app.onrender.com', {
     upgrade: false
 });
 
+const loginOverlay = document.getElementById('login-overlay');
+const usernameInput = document.getElementById('username-input');
+const joinBtn = document.getElementById('join-btn');
 const form = document.getElementById('send-container');
 const messageInput = document.getElementById('messageInp');
 const messageContainer = document.querySelector('.container');
 const audio = document.getElementById('chatAudio');
 
+let chatUnlocked = false;
+
 const unlockAudio = () => {
     audio.play().then(() => {
         audio.pause(); 
         audio.currentTime = 0;
-        document.removeEventListener('click', unlockAudio); 
-    }).catch(e => console.log("Audio engine ready."));
+    }).catch(e => console.log("Audio initialized."));
 };
-document.addEventListener('click', unlockAudio);
+
+const joinChat = () => {
+    const name = usernameInput.value.trim();
+    if (name !== "") {
+        unlockAudio();
+        socket.emit('new-user-joined', name);
+        loginOverlay.style.display = 'none'; // Hide login screen smoothly
+        chatUnlocked = true;
+        messageInput.focus();
+    }
+};
+
+joinBtn.addEventListener('click', joinChat);
+usernameInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') joinChat();
+});
 
 const append = (message, position) => {
     const messageElement = document.createElement('div');
@@ -23,28 +42,24 @@ const append = (message, position) => {
     messageElement.classList.add('message');
     messageElement.classList.add(position);
     messageContainer.append(messageElement);
+    messageContainer.scrollTop = messageContainer.scrollHeight; // Auto-scrolls to newest message
     
     if (position === 'left') {
-        audio.play().catch(error => {
-            console.log("Audio waiting for user click:", error);
-        });
+        audio.play().catch(error => console.log("Audio playback blocked:", error));
     }
 };
 
 form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const message = messageInput.value;
-    if (message.trim() !== '') {
+    if (!chatUnlocked) return;
+    
+    const message = messageInput.value.trim();
+    if (message !== '') {
         append(`You: ${message}`, 'right');
         socket.emit('send', message);
         messageInput.value = '';
     }
 });
-
-const userName = prompt("Enter your name to join");
-if (userName) {
-    socket.emit('new-user-joined', userName);
-}
 
 socket.on('user-joined', name => {
     append(`${name} joined the chat`, 'right');
