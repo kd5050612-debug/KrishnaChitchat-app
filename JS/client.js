@@ -1,4 +1,3 @@
-
 const socket = io('https://krishnachitchat-app.onrender.com', {
     transports: ['websocket'],
     upgrade: false
@@ -14,7 +13,7 @@ const unlockAudio = () => {
         audio.pause(); 
         audio.currentTime = 0;
         document.removeEventListener('click', unlockAudio); 
-    }).catch(e => console.log("Audio ready."));
+    }).catch(e => console.log("Audio engine ready."));
 };
 document.addEventListener('click', unlockAudio);
 
