@@ -1,66 +1,88 @@
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
+<!DOCTYPE html>
+<html lang="en">
 
-const app = express();
+<head>
+    <meta charset="UTF-8">
 
-const server = http.createServer(app);
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-const io = new Server(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
-});
+    <title>Krishna-ChitChat</title>
 
-const users = {};
+    <!-- Socket.IO Client -->
+    <script
+        src="https://cdn.socket.io/4.8.1/socket.io.min.js">
+    </script>
 
-app.get("/", (req, res) => {
-    res.status(200).send("Krishna-ChitChat Server is Running");
-});
+    <!-- Main JavaScript -->
+    <script
+        defer
+        src="./Js/client.js?v=30">
+    </script>
 
-io.on("connection", (socket) => {
+    <!-- CSS -->
+    <link
+        rel="stylesheet"
+        href="./Css/style.css"
+    >
+</head>
 
-    console.log("USER CONNECTED:", socket.id);
+<body>
 
-    socket.on("new-user-joined", (name) => {
+    <!-- Navigation -->
+    <nav>
 
-        users[socket.id] = name;
+        <img
+            class="logog"
+            src="./logo.png"
+            alt="Krishna-ChitChat Logo"
+        >
 
-        console.log(name + " joined the chat");
+        <h1>
+            Welcome to KrishnaChitchat App
+        </h1>
 
-        socket.broadcast.emit("user-joined", name);
-    });
+    </nav>
 
-    socket.on("send", (message) => {
 
-        const name = users[socket.id];
+    <!-- Chat Messages -->
+    <div class="container"></div>
 
-        console.log(name + ": " + message);
 
-        socket.broadcast.emit("receive", {
-            name: name,
-            message: message
-        });
-    });
+    <!-- Message Input -->
+    <div class="send">
 
-    socket.on("disconnect", () => {
+        <form id="send-container">
 
-        const name = users[socket.id];
+            <input
+                type="text"
+                name="messageInp"
+                id="messageInp"
+                placeholder="Enter your message..."
+                autocomplete="off"
+            >
 
-        if (name) {
+            <button
+                class="btn"
+                type="submit"
+            >
+                Send
+            </button>
 
-            console.log(name + " left the chat");
+        </form>
 
-            socket.broadcast.emit("left", name);
+    </div>
 
-            delete users[socket.id];
-        }
-    });
-});
 
-const PORT = process.env.PORT || 8000;
+    <!-- Message Notification Sound -->
+    <audio
+        id="chatAudio"
+        src="./fahhhhh.mp3"
+        preload="auto">
+    </audio>
 
-server.listen(PORT, () => {
-    console.log("Server running on port " + PORT);
-});
+</body>
+
+</html>
