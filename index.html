@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,32 +9,28 @@
     <title>Krishna-ChitChat</title>
 
     <!-- Socket.IO Client -->
-    <script src="https://krishnachitchat-app.onrender.com/socket.io/socket.io.js"></script>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
 
-    <!-- Custom JavaScript -->
-    <script defer src="Js/client.js"></script>
+    <!-- Chat JavaScript -->
+    <script defer src="./Js/client.js?v=3"></script>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="Css/style.css">
+    <link rel="stylesheet" href="./Css/style.css">
 </head>
 
 <body>
 
-    <!-- Navigation Bar -->
     <nav>
-        <img class="logog" src="logo.png" alt="Krishna-ChitChat Logo">
+        <img class="logog" src="./logo.png" alt="Krishna-ChitChat Logo">
 
         <h1>Welcome to KrishnaChitchat App</h1>
     </nav>
 
-    <!-- Chat Messages -->
     <div class="container">
     </div>
 
-    <!-- Message Input -->
     <div class="send">
-
-        <form action="#" id="send-container">
+        <form id="send-container">
 
             <input
                 type="text"
@@ -51,17 +47,14 @@
             </button>
 
         </form>
-
     </div>
 
-    <!-- Notification Sound -->
     <audio
         id="chatAudio"
-        src="fahhhhh.mp3"
+        src="./fahhhhh.mp3"
         preload="auto">
     </audio>
 
 </body>
 
 </html>
-```
