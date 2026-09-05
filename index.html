@@ -1,18 +1,16 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Krishna-ChitChat</title>
 
-    <!-- Socket.IO Client -->
+    <!-- Socket.IO -->
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
 
-    <!-- Chat JavaScript -->
-    <script defer src="./Js/client.js?v=3"></script>
+    <!-- Your JavaScript -->
+    <script defer src="./Js/client.js?v=10"></script>
 
     <!-- CSS -->
     <link rel="stylesheet" href="./Css/style.css">
@@ -22,12 +20,10 @@
 
     <nav>
         <img class="logog" src="./logo.png" alt="Krishna-ChitChat Logo">
-
         <h1>Welcome to KrishnaChitchat App</h1>
     </nav>
 
-    <div class="container">
-    </div>
+    <div class="container"></div>
 
     <div class="send">
         <form id="send-container">
@@ -40,9 +36,7 @@
                 autocomplete="off"
             >
 
-            <button
-                class="btn"
-                type="submit">
+            <button class="btn" type="submit">
                 Send
             </button>
 
@@ -56,5 +50,4 @@
     </audio>
 
 </body>
-
 </html>
